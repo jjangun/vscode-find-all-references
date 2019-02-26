@@ -25,7 +25,7 @@ export class ReferenceProvider implements vscode.ReferenceProvider {
                 reject(new Error('Error'));
             }
             // --column is hardcoded because its mandatory for now
-            const options = '--column '+engine_options;
+            const options = '--pcre2 '+'--column '+engine_options;
 
             // Note to self: if we pass in the additional space after the shell execution, command doesn't get executed correctly when the argument has an extra space.
             // `rg --column` and not `rg --column `
@@ -40,10 +40,6 @@ export class ReferenceProvider implements vscode.ReferenceProvider {
             let args = options.getOptions().split(' ');
             let searchWord = searchTerm;
             
-            if(document.languageId=="cpp"){
-                searchTerm = '^((?!").)*'+searchTerm;
-                console.log("add the regex!");
-            }
             args.push(searchTerm);
             args.push(vscode.workspace.rootPath);
             // TODO : Introduce the ability to choose different search options ripgrep, silver searcher, git grep, platinum searcher etc
@@ -54,6 +50,10 @@ export class ReferenceProvider implements vscode.ReferenceProvider {
 
             lines.forEach((item) => {
                 let arr = item.split(":");
+                
+                if (document.languageId == "cpp") {
+                    arr = item.replace(new RegExp("::", 'g'),";;").split(":")
+                }
 
                 if (arr.length>2) {
                     // In case of drive letter
@@ -66,10 +66,6 @@ export class ReferenceProvider implements vscode.ReferenceProvider {
                     // Position starts from zero refer to vscode.d.ts
                     let line_no = parseInt(arr[1])-1;
                     let col_no = parseInt(arr[2])-1;
-                    // use regex,the seach result is not the original word
-                    if(document.languageId=="cpp"){
-                        col_no =  arr[3].indexOf(searchWord);
-                    }
 
                     let start_pos = new vscode.Position(line_no, col_no);
                     let end_pos = new vscode.Position(line_no, col_no+searchWord.length);
