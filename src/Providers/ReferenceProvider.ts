@@ -4,7 +4,6 @@ import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 import { EngineOptions } from './EngineOptions';
 
-
 export class ReferenceProvider implements vscode.ReferenceProvider {
     public provideReferences(
         document: vscode.TextDocument, position: vscode.Position,
@@ -21,9 +20,11 @@ export class ReferenceProvider implements vscode.ReferenceProvider {
 
             const engine = vscode.workspace.getConfiguration().get<string>('find.all.references.engine');
             const engine_options = vscode.workspace.getConfiguration().get<string>('find.all.references.options');
+            
             if (engine.length<1) {
                 reject(new Error('Error'));
             }
+            
             // --column is hardcoded because its mandatory for now
             const options = '--pcre2 '+'--column '+engine_options;
 
@@ -42,8 +43,10 @@ export class ReferenceProvider implements vscode.ReferenceProvider {
             
             args.push(searchTerm);
             args.push(vscode.workspace.rootPath);
+            
             // TODO : Introduce the ability to choose different search options ripgrep, silver searcher, git grep, platinum searcher etc
             console.log(options.getEngine(), args);
+            
             let rg = child_process.spawnSync(options.getEngine(), args);
             let lines = rg.stdout.toString().split('\n');
             let list = [];
