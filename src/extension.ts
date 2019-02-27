@@ -9,7 +9,8 @@ export function activate(context: vscode.ExtensionContext) {
         "bibtex", "clojure", "coffeescript", "css", "csharp", "diff", "dockerfile", "fsharp", "go", "groovy", "handlebars", "html",
         "ini", "json", "latex", "less", "lua", "makefile", "objective-c", "objective-cpp", "perl6", "perl", "powershell",
         "jade", "python", "r", "razor", "scss", "shaderlab", "shellscript", "sql", "swift", "tex", "xsl", "yaml",
-        "fortran", "fortran-modern"
+        "fortran", "fortran-modern",
+        "qml"
     ];
 
     languages.forEach((language) => {
